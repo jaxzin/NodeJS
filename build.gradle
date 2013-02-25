@@ -1,8 +1,12 @@
 apply from: 'gradle/wrapper.gradle'
-apply from: 'gradle/npm-installer.gradle'
-
 apply plugin: 'base'
+apply plugin: 'maven'
 apply plugin: 'eclipse'
+
+project.ext {
+	localRepo = "file://$rootProject.buildDir/local-repo"
+	nodeHome	= "$rootProject.buildDir/node-home"
+}
 
 repositories {
 	maven {
@@ -15,14 +19,28 @@ configurations {
 }
 
 dependencies {
-	nodetool "org.nodejs:node:0.8.20"
+	nodetool "org.nodejs:node:0.8.20@tar.gz"
 }
 
-task printDeps (dependsOn: uploadArchives) << {
-	configurations.nodetool.each{
-		println it
-	}
+task unjarNode(type:Copy){
+	from zipTree(configurations.nodetool.singleFile)
+	into "$buildDir/node-jar"
 }
 
-task build (dependsOn :printDeps){
+task installNode (type: Exec) {
+	workingDir	nodeHome
+	executable	"tar"
+	args		"-zxvf", configurations.nodetool.singleFile.absolutePath
 }
+
+task installPackages(type: Exec, dependsOn:installNode){
+	//**TODO - figure out how to manufacture this - plugin?
+	executable	"$nodeHome/node-v0.8.20-darwin-x64/bin/npm"
+	args		"install", "coffee-script"
+}
+
+task cleanNodeScript(type: Delete){
+	delete "node_modules"
+}
+
+clean.dependsOn(cleanNodeScript)

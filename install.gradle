@@ -1,0 +1,36 @@
+apply plugin: 'maven'
+
+project.ext {
+	nodeHome	= "$rootProject.buildDir/node-home"
+	nodeVersion	= "0.8.20"
+	localRepo 	= "file://$rootProject.buildDir/local-repo"
+}
+
+task downloadNode(type: DownloadNode) {
+	version = nodeVersion
+	destinationDir file(project.nodeHome)
+}
+
+artifacts {
+	archives(downloadNode.destinationFile) {
+		name 'node'
+		type 'tar.gz'
+		builtBy downloadNode
+	}
+}
+
+uploadArchives {
+	repositories {
+		mavenDeployer {
+			repository(url: localRepo)
+			pom.groupId = 'org.nodejs'
+			pom.artifactId ='node'
+			pom.version = nodeVersion
+			pom.packaging = "tar.gz"
+		}
+	}
+}
+
+task build(dependsOn:uploadArchives){
+	
+}
