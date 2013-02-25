@@ -8,6 +8,7 @@ class DownloadNPM extends DefaultTask {
 
 	@TaskAction doDownloadNPM() {
 		destinationFile.bytes = new URL(downloadUrl).bytes
+		ant.gunzip(src: destinationFile, dest: new File(destinationDir, downloadArchiveName))
 	}
 
 	String getDownloadUrl() {
@@ -22,8 +23,16 @@ class DownloadNPM extends DefaultTask {
 	String getDownloadFileName() {
 		"$distributionNameBase-darwin-x64.tar.gz"
 	}
-
+	
+	String getDownloadArchiveName() {
+		"$distributionNameBase-darwin-x64.tar"
+	}
+	
 	@OutputFile File getDestinationFile() {
 		new File(destinationDir, downloadFileName)
+	}
+	
+	@OutputFile File getDestinationArchive() {
+		new File(destinationDir, downloadArchiveName)
 	}
 }

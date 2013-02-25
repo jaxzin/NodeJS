@@ -9,15 +9,14 @@ task downloadNPM(type: DownloadNPM) {
 	destinationDir file(npmDownload)
 }
 
-task installNPM (type: Copy, dependsOn:downloadNPM){
-	from tarTree(downloadNPM.destinationFile)
-	into npmInstall
+task installNPM (dependsOn:downloadNPM){
+	ant.untar(src: downloadNPM.destinationArchive,dest: npmInstall)
 }
 
 task clean(type: Delete) {
 	delete buildDir
 }
 
-task build (dependsOn:installNPM){
+task build (dependsOn : installNPM){
 
 }
