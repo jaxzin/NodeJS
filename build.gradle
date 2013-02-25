@@ -9,16 +9,13 @@ task downloadNPM(type: DownloadNPM) {
 	destinationDir file(npmDownload)
 }
 
-task installNPM (dependsOn:downloadNPM)<< {
-	println downloadNPM.destinationFile
-	copy {
-		from tarTree(downloadNPM.destinationFile)
-		into npmInstall
-	}
+task installNPM (type: Copy, dependsOn:downloadNPM){
+	from tarTree(downloadNPM.destinationFile)
+	into npmInstall
 }
 
 task clean(type: Delete) {
-  delete buildDir
+	delete buildDir
 }
 
 task build (dependsOn:installNPM){
