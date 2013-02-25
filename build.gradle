@@ -1,21 +1,28 @@
 apply from: 'gradle/wrapper.gradle'
-apply plugin: 'eclipse'
+apply from: 'gradle/npm-installer.gradle'
+
 apply plugin: 'base'
+apply plugin: 'eclipse'
 
-def npmHome = "$buildDir/npm-home"
-
-task downloadNPM(type: DownloadNPM) {
-	npmVersion     "0.8.20"
-	destinationDir file(npmHome)
+repositories {
+	maven {
+		url localRepo
+	}
 }
 
-//Move this to be a task if desired to be incremental
-task installNPM (type: Exec, dependsOn:downloadNPM) {
-	workingDir npmHome
-	executable	"tar"
-	args		"-zxvf", downloadNPM.destinationFile.absolutePath
+configurations {
+	nodetool
 }
 
-task build (dependsOn : installNPM){
+dependencies {
+	nodetool "org.nodejs:node:0.8.20"
+}
 
+task printDeps (dependsOn: uploadArchives) << {
+	configurations.nodetool.each{
+		println it
+	}
+}
+
+task build (dependsOn :printDeps){
 }
