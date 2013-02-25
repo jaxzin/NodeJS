@@ -1,20 +1,19 @@
 apply from: 'gradle/wrapper.gradle'
 apply plugin: 'eclipse'
+apply plugin: 'base'
 
 def npmHome = "$buildDir/npm-home"
 
 task downloadNPM(type: DownloadNPM) {
-	npmVersion "0.8.20"
+	npmVersion     "0.8.20"
 	destinationDir file(npmHome)
 }
 
+//Move this to be a task if desired to be incremental
 task installNPM (type: Exec, dependsOn:downloadNPM) {
 	workingDir npmHome
-	commandLine "tar","-zxvf","$downloadNPM.destinationFile"
-}
-
-task clean(type: Delete) {
-	delete buildDir
+	executable	"tar"
+	args		"-zxvf", downloadNPM.destinationFile.absolutePath
 }
 
 task build (dependsOn : installNPM){
