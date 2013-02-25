@@ -1,1 +1,22 @@
 apply from: 'gradle/wrapper.gradle'
+apply plugin: 'eclipse'
+
+def npmDownload = "$buildDir/npm-download"
+def npmInstall = "$buildDir/npm-install"
+
+task downloadNPM(type: DownloadNPM) {
+	npmVersion "0.8.20"
+	destinationDir file(npmDownload)
+}
+
+task installNPM (dependsOn:downloadNPM)<< {
+	println downloadNPM.destinationFile
+	copy {
+		from tarTree(downloadNPM.destinationFile)
+		into npmInstall
+	}
+}
+
+task clean(type: Delete) {
+  delete buildDir
+}
