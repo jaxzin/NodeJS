@@ -9,7 +9,7 @@ task downloadNPM(type: DownloadNPM) {
 	destinationDir file(npmDownload)
 }
 
-task installNPM (dependsOn:downloadNPM){
+task installNPM (dependsOn:downloadNPM) << {
 	ant.untar(src: downloadNPM.destinationArchive,dest: npmInstall)
 }
 
