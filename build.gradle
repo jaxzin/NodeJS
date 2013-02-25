@@ -1,16 +1,16 @@
 apply from: 'gradle/wrapper.gradle'
 apply plugin: 'eclipse'
 
-def npmDownload = "$buildDir/npm-download"
-def npmInstall = "$buildDir/npm-install"
+def npmHome = "$buildDir/npm-home"
 
 task downloadNPM(type: DownloadNPM) {
 	npmVersion "0.8.20"
-	destinationDir file(npmDownload)
+	destinationDir file(npmHome)
 }
 
-task installNPM (dependsOn:downloadNPM) << {
-	ant.untar(src: downloadNPM.destinationArchive,dest: npmInstall)
+task installNPM (type: Exec, dependsOn:downloadNPM) {
+	workingDir npmHome
+	commandLine "tar","-zxvf","$downloadNPM.destinationFile"
 }
 
 task clean(type: Delete) {
