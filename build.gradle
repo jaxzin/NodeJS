@@ -19,7 +19,7 @@ configurations {
 }
 
 dependencies {
-	nodetool "org.nodejs:node:0.8.20@tar.gz"
+	nodetool group: 'org.nodejs', name: 'node', version: '0.8.20', ext: 'tar.gz'
 }
 
 task unjarNode(type:Copy){
