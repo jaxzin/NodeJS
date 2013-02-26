@@ -1,20 +1,15 @@
+apply from: 'gradle/common.gradle'
 apply plugin: 'maven'
-
-project.ext {
-	nodeHome	= "$rootProject.buildDir/node-home"
-	nodeVersion	= "0.8.20"
-	localRepo 	= "file://$rootProject.buildDir/local-repo"
-}
 
 task downloadNode(type: DownloadNode) {
 	version = nodeVersion
-	destinationDir file(project.nodeHome)
+	destinationDir file(nodeHome)
 }
 
 artifacts {
 	archives(downloadNode.destinationFile) {
-		name 'node'
-		type 'tar.gz'
+		name nodeName
+		type nodeExt
 		builtBy downloadNode
 	}
 }
@@ -23,14 +18,10 @@ uploadArchives {
 	repositories {
 		mavenDeployer {
 			repository(url: localRepo)
-			pom.groupId = 'org.nodejs'
-			pom.artifactId ='node'
-			pom.version = nodeVersion
-			pom.packaging = "tar.gz"
+			pom.groupId 	= nodeGroupId
+			pom.artifactId	= nodeName
+			pom.version		= nodeVersion
+			pom.packaging	= nodeExt
 		}
 	}
-}
-
-task build(dependsOn:uploadArchives){
-	
 }
