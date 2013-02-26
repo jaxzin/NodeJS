@@ -1,17 +1,3 @@
--lib-cov
--*.seed
--*.log
--*.csv
--*.dat
--*.out
--*.pid
--*.gz
--
--pids
--logs
--results
--
--npm-debug.log
 .gradle
 build
 bin
@@ -19,4 +5,3 @@ bin
 *.project
 *.settings
 .DS_Store
-node_modules

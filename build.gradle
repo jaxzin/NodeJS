@@ -1,9 +1,9 @@
-apply from: 'gradle/wrapper.gradle'
-apply from: 'gradle/common.gradle'
+apply from: "gradle/wrapper.gradle"
+apply from: "gradle/common.gradle"
 
-apply plugin: 'base'
-apply plugin: 'maven'
-apply plugin: 'eclipse'
+apply plugin: "base"
+apply plugin: "maven"
+apply plugin: "eclipse"
 
 repositories {
 	maven {
@@ -25,8 +25,36 @@ task installNode (type: Exec) {
 	args		"-zxvf", configurations.nodetool.singleFile.absolutePath
 }
 
-task installPackages(type: Exec, dependsOn:installNode){
-	workingDir	"$rootProject.buildDir"
-	executable	"$nodeHome/node-v$nodeVersion-darwin-x64/bin/npm"
-	args		"install", "coffee-script"
+task zipAllPackages(type: Zip) {
+	archiveName = "all-packages.zip"
+	from "$rootProject.buildDir/node_modules"
+}
+
+def installPackageTask = { name ->
+	task "install${name}PackageTask" (type: Exec, dependsOn:installNode){
+		workingDir	"$rootProject.buildDir"
+		executable	"$nodeHome/node-v$nodeVersion-darwin-x64/bin/npm"
+		args		"install", name
+	}
+	zipAllPackages.dependsOn "install${name}PackageTask"
+}
+
+installPackageTask("coffee-script")
+installPackageTask("mysql")
+
+version = "1.0.0"
+
+artifacts {
+	archives zipAllPackages
+}
+
+uploadArchives {
+	repositories {
+		mavenDeployer {
+			repository(url: localRepo)
+			pom.groupId 	= "com.mycorp"
+			pom.artifactId	= "all-packages"
+			pom.packaging	= "zip"
+		}
+	}
 }

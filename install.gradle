@@ -1,5 +1,5 @@
-apply from: 'gradle/common.gradle'
-apply plugin: 'maven'
+apply from: "gradle/common.gradle"
+apply plugin: "maven"
 
 task downloadNode(type: DownloadNode) {
 	version = nodeVersion
