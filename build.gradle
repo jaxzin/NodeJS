@@ -34,13 +34,7 @@ task installNode (type: Exec) {
 }
 
 task installPackages(type: Exec, dependsOn:installNode){
-	//**TODO - figure out how to manufacture this - plugin?
+	workingDir	"$rootProject.buildDir"
 	executable	"$nodeHome/node-v0.8.20-darwin-x64/bin/npm"
 	args		"install", "coffee-script"
 }
-
-task cleanNodeScript(type: Delete){
-	delete "node_modules"
-}
-
-clean.dependsOn(cleanNodeScript)
